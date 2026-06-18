@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Standard Clock</title>
+<script src="https://cdn.jsdelivr.net/npm/vue@3/dist/vue.global.prod.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Courier New', Courier, monospace;
+    background: #111;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  .clock-standard {
+    background: radial-gradient(ellipse at center, #0d1f1f 0%, #050e0e 70%, #020808 100%);
+    border-radius: 16px;
+    padding: 2.5rem 3rem;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    border: 1px solid #0e2a2a;
+  }
+
+  .date-line {
+    color: #3af4c8;
+    font-size: 13px;
+    letter-spacing: 0.2em;
+    margin-bottom: 0.6rem;
+    opacity: 0.85;
+  }
+
+  .time-display {
+    font-size: clamp(1.5rem, 6vw, 2.75rem);
+    color: #5fffdf;
+    letter-spacing: 0.05em;
+    font-weight: 400;
+    text-shadow: 0 0 18px rgba(95,255,223,0.35);
+    line-height: 1;
+  }
+
+  .colon {
+    animation: blink 1s step-end infinite;
+    display: inline-block;
+  }
+
+  .footer-label {
+    margin-top: 1.2rem;
+    font-size: 9px;
+    letter-spacing: 0.3em;
+    color: #1d5c52;
+    text-transform: uppercase;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  @media (max-width: 520px) {
+    .clock-standard { padding: 2rem 1.5rem; border-radius: 12px; }
+  }
+</style>
+</head>
+<body>
+<div id="app">
+  <div class="clock-standard">
+    <div class="date-line">{{ stdDateLine }}</div>
+    <div class="time-display">
+      {{ hh }}<span class="colon">:</span>{{ mm }}<span class="colon">:</span>{{ ss }}
+    </div>
+    <div class="footer-label">Digital Clock with Vue.js</div>
+  </div>
+</div>
+<script>
+const { createApp, ref, computed, onMounted, onUnmounted } = Vue;
+createApp({
+  setup() {
+    const now = ref(new Date());
+    let timer;
+    onMounted(() => { timer = setInterval(() => { now.value = new Date(); }, 1000); });
+    onUnmounted(() => clearInterval(timer));
+    const pad = n => String(n).padStart(2, '0');
+    const hh = computed(() => pad(now.value.getHours()));
+    const mm = computed(() => pad(now.value.getMinutes()));
+    const ss = computed(() => pad(now.value.getSeconds()));
+    const dayNames = ['SUN','MON','TUE','WED','THU','FRI','SAT'];
+    const stdDateLine = computed(() => {
+      const d = now.value;
+      return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())}  ${dayNames[d.getDay()]}`;
+    });
+    return { hh, mm, ss, stdDateLine };
+  }
+}).mount('#app');
+</script>
+</body>
+</html>

@@ -1,1 +1,1 @@
-Standard Digital Clock web app with Calendar that updates in real-time.
+A clean Standard Digital Clock UI with Calendar that updates in real-time.
